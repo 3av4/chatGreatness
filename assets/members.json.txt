@@ -1,0 +1,14 @@
+{
+  "user01": { "name": "User1", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user02": { "name": "User2", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user03": { "name": "User3", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user04": { "name": "User4", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user05": { "name": "User5", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user06": { "name": "User6", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user07": { "name": "User7", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user08": { "name": "User8", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user09": { "name": "User9", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user10": { "name": "User10", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user11": { "name": "User11", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 },
+  "user12": { "name": "User12", "points": 0, "avatar": "default.png", "bio": "", "badges": [], "messages": 0 }
+}

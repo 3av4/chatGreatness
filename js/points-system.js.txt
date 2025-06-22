@@ -1,0 +1,4 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // يمكن إضافة أي وظائف إضافية خاصة بنظام النقاط هنا
+    // معظم الوظائف موجودة في main.js بالفعل
+});
