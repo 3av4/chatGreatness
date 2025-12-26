@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 لعبة Firebase أونلاين</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(45deg, #0f3460, #e94560);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .game-area {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 900px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        
+        .login-box {
+            text-align: center;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 40px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            margin: 15px 0;
+            color: #333;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            margin: 5px;
+            min-width: 150px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        button.secondary {
+            background: linear-gradient(45deg, #2196F3, #0D47A1);
+        }
+        
+        button.danger {
+            background: linear-gradient(45deg, #f44336, #c62828);
+        }
+        
+        .player-card {
+            background: linear-gradient(45deg, rgba(15, 52, 96, 0.8), rgba(26, 26, 46, 0.8));
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border-left: 5px solid #4CAF50;
+            transition: all 0.3s;
+        }
+        
+        .player-card:hover {
+            transform: translateX(10px);
+            border-left-color: #e94560;
+        }
+        
+        .shop-item {
+            background: rgba(233, 69, 96, 0.2);
+            border: 2px solid #e94560;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .shop-item:hover {
+            background: rgba(233, 69, 96, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .coins {
+            color: gold;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .chat-box {
+            height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .message {
+            background: rgba(33, 150, 243, 0.2);
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin: 10px 0;
+            border-right: 4px solid #2196F3;
+        }
+        
+        .message.me {
+            background: rgba(76, 175, 80, 0.2);
+            border-right-color: #4CAF50;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .online-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+            z-index: 1000;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- صفحة الدخول -->
+        <div id="loginPage" class="panel login-box">
+            <div style="font-size: 60px; margin-bottom: 20px;">🎮</div>
+            <h1>لعبة متعددة اللاعبين</h1>
+            <p style="color: #aaa; margin-bottom: 30px; font-size: 18px;">انضم ولعب مع أصدقائك في الوقت الحقيقي!</p>
+            
+            <input type="text" id="username" placeholder="اكتب اسمك هنا..." autocomplete="off">
+            
+            <button onclick="login()" style="width: 100%; padding: 18px; font-size: 20px;">
+                <span class="online-dot"></span> 🚀 انضم للعبة
+            </button>
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                <h3>ℹ️ كيف تعمل؟</h3>
+                <ol style="text-align: right; padding-right: 20px; margin-top: 10px;">
+                    <li style="margin-bottom: 10px;">أدخل اسمك وانضم</li>
+                    <li style="margin-bottom: 10px;">اشترِ عناصر من المتجر</li>
+                    <li style="margin-bottom: 10px;">شاهد اللاعبين الآخرين</li>
+                    <li>تحدث في الدردشة الحية</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- صفحة اللعبة -->
+        <div id="gamePage" style="display: none;">
+            <!-- الهيدر -->
+            <div class="header">
+                <h1>🎮 لعبة متعددة اللاعبين</h1>
+                <p><span class="online-dot"></span> <span id="onlineCount">0</span> لاعبون متصلون الآن</p>
+                <div style="margin-top: 20px;">
+                    <span style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 20px;">
+                        👤 أنت: <strong id="playerName"></strong> | 
+                        🪙 رصيدك: <span class="coins" id="myCoins">100</span>
+                    </span>
+                </div>
+            </div>
+            
+            <!-- الشبكة الرئيسية -->
+            <div class="game-area">
+                <!-- العمود الأيسر -->
+                <div>
+                    <!-- المتجر -->
+                    <div class="panel">
+                        <h2 style="margin-bottom: 20px;">🛒 متجر العناصر</h2>
+                        <div id="shopItems">
+                            <!-- سيتم تعبئته بالجافاسكريبت -->
+                        </div>
+                    </div>
+                    
+                    <!-- الإحصائيات -->
+                    <div class="panel">
+                        <h2 style="margin-bottom: 20px;">📊 إحصائيات اللعبة</h2>
+                        <div class="stats-grid">
+                            <div class="stat">
+                                <div class="stat-value" id="totalPlayers">0</div>
+                                <div>لاعب نشط</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="totalCoins">0</div>
+                                <div>إجمالي العملات</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="totalItems">0</div>
+                                <div>عناصر مباعة</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="totalMessages">0</div>
+                                <div>رسائل محادثة</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- العمود الأيمن -->
+                <div>
+                    <!-- لوحة المتصدرين -->
+                    <div class="panel">
+                        <h2 style="margin-bottom: 20px;">🏆 المتصدرون</h2>
+                        <div id="leaderboard">
+                            جاري التحميل...
+                        </div>
+                    </div>
+                    
+                    <!-- الدردشة -->
+                    <div class="panel">
+                        <h2 style="margin-bottom: 20px;">💬 الدردشة الحية</h2>
+                        <div class="chat-box" id="chatBox"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <input type="text" id="messageInput" placeholder="اكتب رسالة..." style="flex: 1;">
+                            <button onclick="sendChatMessage()">إرسال</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- الفوتر -->
+            <div style="text-align: center; margin-top: 30px; padding: 20px; color: #aaa;">
+                <p>⚡ يعمل على Firebase - تحديث لحظي | 🔗 شارك الرابط مع أصدقائك!</p>
+                <button onclick="resetGame()" class="danger" style="margin-top: 15px;">🔄 إعادة تعيين اللعبة</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- الإشعارات -->
+    <div id="notification" class="notification" style="display: none;"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        // 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥
+        // ⚠️ ⚠️ ⚠️ استبدل هذا الكود بإعداداتك من Firebase ⚠️ ⚠️ ⚠️
+        const firebaseConfig = {
+          const firebaseConfig = {
+    apiKey: "AIzaSyCmd-NJRcpJcTlBeLEcMT5kx3EFXGEbZTA",
+    authDomain: "planning-with-ai-3c51a.firebaseapp.com",
+    databaseURL: "https://planning-with-ai-3c51a-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "planning-with-ai-3c51a",
+    storageBucket: "planning-with-ai-3c51a.firebasestorage.app",
+    messagingSenderId: "752519469556",
+    appId: "1:752519469556:web:606f18aeb972bdbdb581a1"
+};
+        };
+        // 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥
+        
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // متغيرات اللعبة
+        let playerName = "";
+        let playerCoins = 1000;
+        let playerItems = [];
+        let playerScore = 0;
+        
+        // عناصر المتجر
+        const shopItems = [
+            { id: 1, name: "🗡️ سيف النينجا", price: 300, emoji: "🗡️", desc: "يضاعف قوتك الهجومية" },
+            { id: 2, name: "🛡️ درع التنين", price: 250, emoji: "🛡️", desc: "يحميك من جميع الهجمات" },
+            { id: 3, name: "👑 تاج الملك", price: 500, emoji: "👑", desc: "يزيد دخلك من العملات" },
+            { id: 4, name: "🧪 جرعة الخلود", price: 150, emoji: "🧪", desc: "استعادة كاملة للصحة" },
+            { id: 5, name: "🐉 بيضة التنين", price: 800, emoji: "🐉", desc: "تفقس لتنين صغير" },
+            { id: 6, name: "💎 الماسة الأسطورية", price: 1000, emoji: "💎", desc: "أغلى عنصر في اللعبة" }
+        ];
+        
+        // تسجيل الدخول
+        function login() {
+            const nameInput = document.getElementById('username');
+            playerName = nameInput.value.trim();
+            
+            if (!playerName || playerName.length < 2) {
+                showNotification('الرجاء إدخال اسم صحيح (حرفين على الأقل)');
+                return;
+            }
+            
+            // إخفاء صفحة الدخول
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('gamePage').style.display = 'block';
+            
+            // تحديث الاسم
+            document.getElementById('playerName').textContent = playerName;
+            
+            // إنشاء/تحديث بيانات اللاعب
+            const playerRef = database.ref('players/' + playerName);
+            playerRef.once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    // لاعب موجود - تحميل بياناته
+                    const data = snapshot.val();
+                    playerCoins = data.coins || 1000;
+                    playerItems = data.items || [];
+                    playerScore = data.score || 0;
+                } else {
+                    // لاعب جديد - إنشاء بياناته
+                    playerRef.set({
+                        name: playerName,
+                        coins: 1000,
+                        items: [],
+                        score: 0,
+                        joined: new Date().toISOString(),
+                        lastSeen: Date.now()
+                    });
+                }
+                
+                // تحديث العرض
+                updateDisplay();
+                
+                // بدء التحديثات
+                startGameUpdates();
+                
+                // إشعار دخول
+                sendChatMessage('انضم إلى اللعبة! 🎉', true);
+                
+                showNotification(`🎮 مرحباً ${playerName}! تم الانضمام بنجاح`);
+            });
+        }
+        
+        // بدء التحديثات التلقائية
+        function startGameUpdates() {
+            // تحديث اللاعبين
+            database.ref('players').on('value', updatePlayers);
+            
+            // تحديث الدردشة
+            database.ref('messages').limitToLast(20).on('value', updateChat);
+            
+            // تحديث المتجر
+            renderShopItems();
+            
+            // تحديث النشاط كل 30 ثانية
+            setInterval(updateActivity, 30000);
+            
+            // تنظيف اللاعبين غير النشطين كل دقيقة
+            setInterval(cleanInactivePlayers, 60000);
+        }
+        
+        // تحديث بيانات اللاعبين
+        function updatePlayers(snapshot) {
+            const players = snapshot.val() || {};
+            
+            // تحديث العداد
+            document.getElementById('onlineCount').textContent = Object.keys(players).length;
+            document.getElementById('totalPlayers').textContent = Object.keys(players).length;
+            
+            // تحديث بياناتي
+            if (players[playerName]) {
+                const myData = players[playerName];
+                playerCoins = myData.coins || 1000;
+                playerItems = myData.items || [];
+                playerScore = myData.score || 0;
+                updateDisplay();
+            }
+            
+            // تحديث المتصدرين
+            updateLeaderboard(players);
+            
+            // تحديث الإحصائيات
+            updateStats(players);
+        }
+        
+        // تحديث العرض
+        function updateDisplay() {
+            document.getElementById('myCoins').textContent = playerCoins;
+        }
+        
+        // تحديث المتصدرين
+        function updateLeaderboard(players) {
+            const leaderboard = document.getElementById('leaderboard');
+            const playersArray = Object.keys(players).map(name => ({
+                name,
+                ...players[name]
+            }));
+            
+            // ترتيب حسب النقاط
+            playersArray.sort((a, b) => (b.score || 0) - (a.score || 0));
+            
+            let html = '';
+            playersArray.slice(0, 10).forEach((player, index) => {
+                const isMe = player.name === playerName;
+                const rankEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅';
+                
+                html += `
+                <div class="player-card" style="border-left-color: ${isMe ? '#e94560' : '#4CAF50'}">
+                    <div>
+                        <strong>${rankEmoji} ${index + 1}. ${player.name}${isMe ? ' (أنت)' : ''}</strong>
+                        <div style="font-size: 12px; color: #aaa; margin-top: 5px;">
+                            🪙 ${player.coins || 0} عملة | 🏅 ${player.score || 0} نقطة
+                        </div>
+                    </div>
+                    <div style="text-align: left;">
+                        ${player.items ? player.items.slice(-2).map(item => `🛍️ ${item}`).join('<br>') : ''}
+                    </div>
+                </div>
+                `;
+            });
+            
+            leaderboard.innerHTML = html || '<p>لا يوجد لاعبين بعد</p>';
+        }
+        
+        // تحديث الإحصائيات
+        function updateStats(players) {
+            let totalCoins = 0;
+            let totalItems = 0;
+            
+            Object.values(players).forEach(player => {
+                totalCoins += player.coins || 0;
+                totalItems += (player.items || []).length;
+            });
+            
+            document.getElementById('totalCoins').textContent = totalCoins;
+            document.getElementById('totalItems').textContent = totalItems;
+        }
+        
+        // عرض عناصر المتجر
+        function renderShopItems() {
+            const shopContainer = document.getElementById('shopItems');
+            let html = '';
+            
+            shopItems.forEach(item => {
+                html += `
+                <div class="shop-item" onclick="buyItem(${item.id})">
+                    <div style="font-size: 40px; margin-bottom: 10px;">${item.emoji}</div>
+                    <div style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">${item.name}</div>
+                    <div style="color: #aaa; font-size: 14px; margin-bottom: 10px;">${item.desc}</div>
+                    <div style="color: gold; font-weight: bold; font-size: 20px;">${item.price} 🪙</div>
+                </div>
+                `;
+            });
+            
+            shopContainer.innerHTML = html;
+        }
+        
+        // شراء عنصر
+        function buyItem(itemId) {
+            const item = shopItems.find(i => i.id === itemId);
+            
+            if (!item) return;
+            
+            if (playerCoins < item.price) {
+                showNotification(`❌ رصيدك غير كافي! تحتاج ${item.price} عملة`);
+                return;
+            }
+            
+            if (!confirm(`هل تريد شراء ${item.name} بـ ${item.price} عملة؟`)) {
+                return;
+            }
+            
+            // تحديث في قاعدة البيانات
+            const playerRef = database.ref('players/' + playerName);
+            
+            playerRef.transaction((currentData) => {
+                if (currentData) {
+                    currentData.coins = (currentData.coins || 1000) - item.price;
+                    currentData.items = [...(currentData.items || []), item.name];
+                    currentData.score = (currentData.score || 0) + Math.floor(item.price / 10);
+                    currentData.lastSeen = Date.now();
+                }
+                return currentData;
+            }).then(() => {
+                showNotification(`🎉 اشتريت ${item.name} بنجاح!`);
+                sendChatMessage(`اشتريت ${item.name}! 🛍️`);
+            }).catch((error) => {
+                showNotification('❌ حدث خطأ أثناء الشراء');
+                console.error(error);
+            });
+        }
+        
+        // إرسال رسالة دردشة
+        function sendChatMessage(text = null, isSystem = false) {
+            const input = document.getElementById('messageInput');
+            const messageText = text || input.value.trim();
+            
+            if (!messageText) return;
+            
+            const messageData = {
+                name: isSystem ? 'النظام' : playerName,
+                text: messageText,
+                time: new Date().toLocaleTimeString('ar-EG'),
+                timestamp: Date.now(),
+                type: isSystem ? 'system' : 'player'
+            };
+            
+            database.ref('messages').push(messageData);
+            
+            if (!text) {
+                input.value = '';
+                input.focus();
+            }
+        }
+        
+        // تحديث الدردشة
+        function updateChat(snapshot) {
+            const messages = snapshot.val() || {};
+            const chatBox = document.getElementById('chatBox');
+            
+            // تحويل إلى مصفوفة وترتيب حسب الوقت
+            const messagesArray = Object.keys(messages).map(key => ({
+                id: key,
+                ...messages[key]
+            })).sort((a, b) => a.timestamp - b.timestamp);
+            
+            let html = '';
+            messagesArray.forEach(msg => {
+                const isMe = msg.name === playerName;
+                const isSystem = msg.type === 'system';
+                
+                if (isSystem) {
+                    html += `
+                    <div class="message" style="background: rgba(255, 193, 7, 0.2); border-right-color: #FFC107; text-align: center;">
+                        🔔 ${msg.text}
+                        <div style="font-size: 11px; color: #aaa; margin-top: 5px;">${msg.time}</div>
+                    </div>
+                    `;
+                } else {
+                    html += `
+                    <div class="message ${isMe ? 'me' : ''}">
+                        <strong>${msg.name}:</strong> ${msg.text}
+                        <div style="font-size: 11px; color: #aaa; margin-top: 5px;">${msg.time}</div>
+                    </div>
+                    `;
+                }
+            });
+            
+            chatBox.innerHTML = html;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            // تحديث عدد الرسائل
+            document.getElementById('totalMessages').textContent = messagesArray.length;
+        }
+        
+        // تحديث النشاط
+        function updateActivity() {
+            if (playerName) {
+                database.ref('players/' + playerName).update({
+                    lastSeen: Date.now()
+                });
+            }
+        }
+        
+        // تنظيف اللاعبين غير النشطين
+        function cleanInactivePlayers() {
+            const now = Date.now();
+            const cutoffTime = now - 5 * 60 * 1000; // 5 دقائق
+            
+            database.ref('players').once('value').then((snapshot) => {
+                const players = snapshot.val() || {};
+                const updates = {};
+                
+                Object.keys(players).forEach(name => {
+                    if (players[name].lastSeen < cutoffTime) {
+                        updates[name] = null; // حذف اللاعب
+                    }
+                });
+                
+                if (Object.keys(updates).length > 0) {
+                    database.ref('players').update(updates);
+                }
+            });
+        }
+        
+        // إعادة تعيين اللعبة
+        function resetGame() {
+            if (confirm('هل تريد إعادة تعيين جميع بيانات اللعبة؟ هذا سيحذف كل شيء!')) {
+                database.ref().remove().then(() => {
+                    showNotification('🔄 تم إعادة تعيين اللعبة بنجاح');
+                    location.reload();
+                });
+            }
+        }
+        
+        // عرض الإشعارات
+        function showNotification(text) {
+            const notification = document.getElementById('notification');
+            notification.textContent = text;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // أحداث لوحة المفاتيح
+        document.getElementById('username')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+        
+        document.getElementById('messageInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+        
+        // تهيئة المتجر عند التحميل
+        window.addEventListener('load', () => {
+            renderShopItems();
+            document.getElementById('username').focus();
+        });
+    </script>
+</body>
+</html>
